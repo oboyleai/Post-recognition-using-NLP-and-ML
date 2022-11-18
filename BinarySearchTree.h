@@ -405,7 +405,15 @@ private:
   // NOTE:    This function must be tree recursive.
   static void destroy_nodes_impl(Node *node)
   {
-    if ()
+    if(node != nullptr)
+    {
+     destroy_nodes_impl(node->right);
+    destroy_nodes_impl(node->left);
+    delete node;
+    node = nullptr;
+    }
+    
+    
   }
 
   // EFFECTS : Searches the tree rooted at 'node' for an element equivalent
