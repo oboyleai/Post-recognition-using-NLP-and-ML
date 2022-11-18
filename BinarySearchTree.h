@@ -413,7 +413,6 @@ private:
     node = nullptr;
     }
     
-    
   }
 
   // EFFECTS : Searches the tree rooted at 'node' for an element equivalent
@@ -430,7 +429,27 @@ private:
   //       not less than B and B is not less than A.
   static Node *find_impl(Node *node, const T &query, Compare less)
   {
-    assert(false);
+    if(node == nullptr)
+    {
+      return nullptr;
+    }
+    else if (!(node->datum less query) && !(query less node->datum))
+    {
+      return node;
+    }
+    else if(query less node->datum)
+    {
+      // come back to this
+      return find_impl(node->left, query, less);
+    }
+    else if (node->datum less query)
+    {
+      return find_impl(node->right, query, less);
+    }
+    else
+    {
+      retur nullptr;
+    }
   }
 
   // REQUIRES: item is not already contained in the tree rooted at 'node'
