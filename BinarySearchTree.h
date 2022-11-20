@@ -405,14 +405,13 @@ private:
   // NOTE:    This function must be tree recursive.
   static void destroy_nodes_impl(Node *node)
   {
-    if(node != nullptr)
+    if (node != nullptr)
     {
-     destroy_nodes_impl(node->right);
-    destroy_nodes_impl(node->left);
-    delete node;
-    node = nullptr;
+      destroy_nodes_impl(node->right);
+      destroy_nodes_impl(node->left);
+      delete node;
+      node = nullptr;
     }
-    
   }
 
   // EFFECTS : Searches the tree rooted at 'node' for an element equivalent
@@ -429,7 +428,7 @@ private:
   //       not less than B and B is not less than A.
   static Node *find_impl(Node *node, const T &query, Compare less)
   {
-    if(node == nullptr)
+    if (node == nullptr)
     {
       return nullptr;
     }
@@ -437,7 +436,7 @@ private:
     {
       return node;
     }
-    else if(query less node->datum)
+    else if (query less node->datum)
     {
       // come back to this
       return find_impl(node->left, query, less);
