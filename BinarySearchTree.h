@@ -518,7 +518,13 @@ private:
   //       for the definition of a in-order traversal.
   static void traverse_inorder_impl(const Node *node, std::ostream &os)
   {
-    assert(false);
+    if (node == nullptr)
+    {
+      return;
+    }
+    traverse_preorder_impl(node->left, os);
+    os << node->datum << " ";
+    traverse_preorder_impl(node->right, os);
   }
 
   // EFFECTS : Traverses the tree rooted at 'node' using a pre-order traversal,
@@ -530,7 +536,13 @@ private:
   //       for the definition of a pre-order traversal.
   static void traverse_preorder_impl(const Node *node, std::ostream &os)
   {
-    assert(false);
+    if (node == nullptr)
+    {
+      return;
+    }
+    os << node->datum << " ";
+    traverse_preorder_impl(node->left, os);
+    traverse_preorder_impl(node->right, os);
   }
 
   // EFFECTS : Returns a pointer to the Node containing the smallest element
