@@ -447,7 +447,7 @@ private:
     }
     else
     {
-      retur nullptr;
+      return nullptr;
     }
   }
 
@@ -480,7 +480,11 @@ private:
   //       structure, and where the smallest element lives.
   static Node *min_element_impl(Node *node)
   {
-    assert(false);
+    if (node->left == nullptr)
+    {
+      return node;
+    }
+    return min_element_impl(node->left);
   }
 
   // EFFECTS : Returns a pointer to the Node containing the maximum element
@@ -490,7 +494,11 @@ private:
   //       structure, and where the largest element lives.
   static Node *max_element_impl(Node *node)
   {
-    assert(false);
+    if (node->right == nullptr)
+    {
+      return node;
+    }
+    return max_element_impl(node->right);
   }
 
   // EFFECTS: Returns whether the sorting invariant holds on the tree
