@@ -468,7 +468,18 @@ private:
   //       parameter to compare elements.
   static Node *insert_impl(Node *node, const T &item, Compare less)
   {
-    assert(false);
+    if (node == nullptr)
+    {
+      node *n = new node;
+      n->right = nullptr;
+      n->left = nullptr;
+      n->datum = item;
+      return n;
+    }
+    else if (item less node->datum)
+    {
+      //unfinished
+    }
   }
 
   // EFFECTS : Returns a pointer to the Node containing the minimum element
