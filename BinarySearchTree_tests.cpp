@@ -155,4 +155,31 @@ TEST(test_max_element_impl)
     ASSERT_EQUAL(*bst.min_element(), 9);
 }
 
+// you have to break abstraction in order to test this
+TEST(test_check_sorting_invariant_impl)
+{
+    // size 0, 1
+    BinarySearchTree<int> bst;
+    ASSERT_TRUE(bst.check_sorting_invariant());
+    bst.insert(10);
+    ASSERT_TRUE(bst.check_sorting_invariant());
+    bst.insert(11);
+    BinarySearchTree<int>::Iterator begin = bst.begin();
+
+    // Tests left side
+    // breaks sorting invariant
+    *begin = 20;
+    ASSERT_FALSE(bst.check_sorting_invariant());
+    // fixes sorting invariant
+    *begin = 10;
+    ASSERT_TRUE(bst.check_sorting_invariant());
+
+    // tests right side
+    bst.insert(13);
+    BinarySearchTree<int>::Iterator big_el = bst.max_element();
+    *big_el = 1;
+    ASSERT_FALSE(bst.check_sorting_invariant());
+}
+// TEST
+
 TEST_MAIN()

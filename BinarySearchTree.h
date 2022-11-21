@@ -468,18 +468,7 @@ private:
   //       parameter to compare elements.
   static Node *insert_impl(Node *node, const T &item, Compare less)
   {
-    if (node == nullptr)
-    {
-      node *n = new node;
-      n->right = nullptr;
-      n->left = nullptr;
-      n->datum = item;
-      return n;
-    }
-    else if (item less node->datum)
-    {
-      //unfinished
-    }
+    assert(false);
   }
 
   // EFFECTS : Returns a pointer to the Node containing the minimum element
@@ -517,7 +506,26 @@ private:
   // NOTE:    This function must be tree recursive.
   static bool check_sorting_invariant_impl(const Node *node, Compare less)
   {
-    assert(false);
+    Node *l_node = node->left;
+    Node *r_node = node->right;
+    bool sorting_invariant_holds = true;
+
+    // tests if the node on the left is less than current node
+    // then recursively calls on the left node to check the nodes below it
+    if (l_node != nullptr)
+    {
+      sorting_invariant_holds = l_node->datum less node->datum;
+      sorting_invariant_holds = check_sorting_invariant(l_node, less);
+    }
+
+    // same as above just for the right
+    if (r_node != nullptr)
+    {
+      sorting_invariant_holds = node->datum less r_node->datum;
+      sorting_invariant_holds = check_sorting_invariant(r_node, less);
+    }
+
+    return sorting_invariant_holds;
   }
 
   // EFFECTS : Traverses the tree rooted at 'node' using an in-order traversal,
@@ -529,13 +537,7 @@ private:
   //       for the definition of a in-order traversal.
   static void traverse_inorder_impl(const Node *node, std::ostream &os)
   {
-    if (node == nullptr)
-    {
-      return;
-    }
-    traverse_preorder_impl(node->left, os);
-    os << node->datum << " ";
-    traverse_preorder_impl(node->right, os);
+    assert(false);
   }
 
   // EFFECTS : Traverses the tree rooted at 'node' using a pre-order traversal,
@@ -547,13 +549,7 @@ private:
   //       for the definition of a pre-order traversal.
   static void traverse_preorder_impl(const Node *node, std::ostream &os)
   {
-    if (node == nullptr)
-    {
-      return;
-    }
-    os << node->datum << " ";
-    traverse_preorder_impl(node->left, os);
-    traverse_preorder_impl(node->right, os);
+    assert(false);
   }
 
   // EFFECTS : Returns a pointer to the Node containing the smallest element
