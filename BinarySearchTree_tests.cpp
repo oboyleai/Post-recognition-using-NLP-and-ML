@@ -71,10 +71,10 @@ TEST(test_copy_nodes_impl)
     ASSERT_EQUAL(a.to_string(), c.to_string());
 
     // tests 10 els
-    BinarySearchTree<int> c;
+    BinarySearchTree<int> d;
     for (int i = 1; i < 11; i++)
         c.insert(i);
-    BinarySearchTree<int> d(c);
+    BinarySearchTree<int> e(d);
     ASSERT_EQUAL(d.to_string(), c.to_string());
 }
 
