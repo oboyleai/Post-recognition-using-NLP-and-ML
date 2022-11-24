@@ -393,7 +393,6 @@ private:
   // NOTE:    This function must be tree recursive.
   static Node *copy_nodes_impl(Node *node)
   {
-
     Node *new_node = new Node;
     new_node->datum = new_node->datum;
     new_node->left = node->left;
@@ -432,16 +431,16 @@ private:
     {
       return nullptr;
     }
-    else if (!(node->datum less query) && !(query less node->datum))
+    else if (!(less(node->datum, query)) && !less(query, node->datum))
     {
       return node;
     }
-    else if (query less node->datum)
+    else if (less(query, node->datum))
     {
       // come back to this
       return find_impl(node->left, query, less);
     }
-    else if (node->datum less query)
+    else if (less(node->datum, query))
     {
       return find_impl(node->right, query, less);
     }
@@ -466,9 +465,47 @@ private:
   //       associated with this instantiation of the BinarySearchTree
   //       template, NOT according to the < operator. Use the "less"
   //       parameter to compare elements.
+
+  // bruhh this is nuts
   static Node *insert_impl(Node *node, const T &item, Compare less)
   {
-    assert(false);
+    ///
+    // ensure node doesn't already exist in the tree
+    assert(find_impl(node, item, less) == nullptr);
+
+    if (node == nullptr)
+    {
+      Node *n = new Node;
+      n->right = nullptr;
+      n->left = nullptr;
+      n->datum = item;
+
+      return n;
+    }
+    else
+    {
+      Node *next_node = node->left;
+      bool next_is_right = less(node->datum, item);
+      if (next_is_right)
+        next_node = node->right;
+
+      if (next_node == nullptr)
+      {
+        Node *n = new Node;
+        n->right = nullptr;
+        n->left = nullptr;
+        n->datum = item;
+        if (next_is_right)
+          node->right = n;
+        else
+          node->left = n;
+      }
+      else if (next_is_right)
+        insert_impl(next_node, item, less);
+      else
+        insert_impl(next_node, item, less);
+      return node;
+    }
   }
 
   // EFFECTS : Returns a pointer to the Node containing the minimum element
@@ -478,7 +515,8 @@ private:
   //       the iterator code that is provided for you.
   // HINT: You don't need to compare any elements! Think about the
   //       structure, and where the smallest element lives.
-  static Node *min_element_impl(Node *node)
+  static Node *
+  min_element_impl(Node *node)
   {
     if (node->left == nullptr)
     {
@@ -514,15 +552,15 @@ private:
     // then recursively calls on the left node to check the nodes below it
     if (l_node != nullptr)
     {
-      sorting_invariant_holds = l_node->datum less node->datum;
-      sorting_invariant_holds = check_sorting_invariant(l_node, less);
+      sorting_invariant_holds = less(l_node->datum, node->datum);
+      sorting_invariant_holds = check_sorting_invariant_impl(l_node, less);
     }
 
     // same as above just for the right
     if (r_node != nullptr)
     {
-      sorting_invariant_holds = node->datum less r_node->datum;
-      sorting_invariant_holds = check_sorting_invariant(r_node, less);
+      sorting_invariant_holds = less(node->datum, r_node->datum);
+      sorting_invariant_holds = check_sorting_invariant_impl(r_node, less);
     }
 
     return sorting_invariant_holds;
@@ -567,7 +605,6 @@ private:
   {
     assert(false);
   }
-
 }; // END of BinarySearchTree class
 
 #include "TreePrint.h" // DO NOT REMOVE!!!
