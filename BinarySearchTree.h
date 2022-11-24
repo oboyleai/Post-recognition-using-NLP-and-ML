@@ -391,6 +391,8 @@ private:
   //          with the same elements and EXACTLY the same structure as the
   //          tree rooted at 'node'.
   // NOTE:    This function must be tree recursive.
+  
+  // this is not finished
   static Node *copy_nodes_impl(Node *node)
   {
     Node *new_node = new Node;
@@ -398,6 +400,7 @@ private:
     new_node->left = node->left;
     new_node->right = node->right;
     return new_node;
+    // add recursion
   }
 
   // EFFECTS: Frees the memory for all nodes used in the tree rooted at 'node'.
@@ -515,8 +518,7 @@ private:
   //       the iterator code that is provided for you.
   // HINT: You don't need to compare any elements! Think about the
   //       structure, and where the smallest element lives.
-  static Node *
-  min_element_impl(Node *node)
+  static Node *min_element_impl(Node *node)
   {
     if (node->left == nullptr)
     {
@@ -575,7 +577,13 @@ private:
   //       for the definition of a in-order traversal.
   static void traverse_inorder_impl(const Node *node, std::ostream &os)
   {
-    assert(false);
+    if (node == nullptr)
+    {
+      return;
+    }
+    traverse_inorder_impl(node->left, os);
+    os << node->datum << " ";
+    traverse_inorder_impl(node->right, os);
   }
 
   // EFFECTS : Traverses the tree rooted at 'node' using a pre-order traversal,
@@ -587,7 +595,13 @@ private:
   //       for the definition of a pre-order traversal.
   static void traverse_preorder_impl(const Node *node, std::ostream &os)
   {
-    assert(false);
+    if (node == nullptr)
+    {
+      return;
+    }
+    os << node->datum << " ";
+    traverse_inorder_impl(node->left, os);
+    traverse_inorder_impl(node->right, os);
   }
 
   // EFFECTS : Returns a pointer to the Node containing the smallest element
@@ -601,9 +615,27 @@ private:
   // HINT: At each step, compare 'val' the the current node (using the
   //       'less' parameter). Based on the result, you gain some information
   //       about where the element you're looking for could be.
+  
+  //this hurts my head sooo badly
   static Node *min_greater_than_impl(Node *node, const T &val, Compare less)
   {
-    assert(false);
+    // base cases
+    if (node == nullptr || less(*max_element_impl(node), val))
+    {
+      return nullptr;
+    }
+    else if (less(val, node->datum))
+    {
+      if (less(node->left, val))
+      {
+        return node;
+      }
+      return min_greater_than_impl(node->left, val, less);
+    }
+    else if (less(node->datum, val))
+    {
+      return min_greater_than_impl(node->right, val, less);
+    }
   }
 }; // END of BinarySearchTree class
 
