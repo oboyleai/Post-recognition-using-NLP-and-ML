@@ -2,6 +2,11 @@
 
 #include "BinarySearchTree.h"
 #include "unit_test_framework.h"
+#include <iostream>
+#include <sstream>
+#include <string>
+
+using namespace std;
 
 TEST(test_empty)
 {
@@ -92,7 +97,7 @@ TEST(test_destroy_nodes_impl)
     {
         a = b;
     }
-    catch (const std::exception &exc)
+    catch (const exception &exc)
     {
         code_works = false;
     }
@@ -110,17 +115,26 @@ TEST(test_destroy_nodes_impl)
     ASSERT_TRUE(a.empty());
 }
 
-// // beyond me man
-// TEST(test_find_impl)
-// {
-//     ASSERT_TRUE(true);
-// }
+TEST(test_find_impl)
+{
+    BinarySearchTree<int> bst;
+    bst.insert(2);
+    ASSERT_TRUE(*bst.find(2) == 2);
+    ASSERT_TRUE(bst.find(1) == bst.end());
 
-// // beyond me man
-// TEST(test_insert_impl)
-// {
-//     ASSERT_TRUE(true);
-// }
+    BinarySearchTree<int> bst2;
+    for (int i = 0; i < 10; i++)
+    {
+        bst2.insert(i);
+    }
+    for (int i = 0; i < 10; i++)
+    {
+        ASSERT_FALSE(bst2.find(i) == bst2.end());
+    }
+
+    ASSERT_TRUE(bst2.find(1) == ++bst2.begin());
+    ASSERT_EQUAL(*bst2.find(4), *(++ ++ ++ ++bst2.begin()));
+}
 
 // I am sussed about min and max
 
@@ -177,7 +191,7 @@ TEST(test_check_sorting_invariant_impl)
     // Tests left side
     // breaks sorting invariant
     *begin = 20;
-    std::cout << bst.to_string() << std::endl;
+    cout << bst.to_string() << endl;
     ASSERT_FALSE(bst.check_sorting_invariant());
     // fixes sorting invariant
     *begin = 10;
@@ -190,18 +204,71 @@ TEST(test_check_sorting_invariant_impl)
     ASSERT_FALSE(bst.check_sorting_invariant());
 }
 
-// something with string streams
-//  TEST(test_traverse_inorder)
-//  {
+TEST(test_traverse_inorder)
+{
+    // tests with no size
+    BinarySearchTree<int> bst;
+    string expected_string = "";
+    ostringstream bst_output;
+    bst.traverse_inorder(bst_output);
+    string actual_string = bst_output.str();
+    ASSERT_EQUAL(actual_string, expected_string);
 
-// }
+    // tests with normal tree
+    bst.insert(4);
+    bst.insert(2);
+    bst.insert(6);
+    bst.insert(1);
+    bst.insert(3);
+    bst.insert(5);
+    bst.insert(7);
 
-// TEST(test_traverse_preorder)
-// {
-// }
+    expected_string = "1 2 3 4 5 6 7 ";
+    bst.traverse_inorder(bst_output);
+    actual_string = bst_output.str();
+    ASSERT_EQUAL(actual_string, expected_string);
+}
 
+TEST(test_traverse_preorder)
+{
+    // tests with no size
+    BinarySearchTree<int> bst;
+    string expected_string = "";
+    ostringstream bst_output;
+    bst.traverse_preorder(bst_output);
+    string actual_string = bst_output.str();
+    ASSERT_EQUAL(actual_string, expected_string);
+
+    // tests with normal tree
+    bst.insert(4);
+    bst.insert(2);
+    bst.insert(6);
+    bst.insert(1);
+    bst.insert(3);
+    bst.insert(5);
+    bst.insert(7);
+    cout << bst.to_string() << endl;
+
+    expected_string = "4 2 1 3 6 5 7 ";
+    bst.traverse_preorder(bst_output);
+    actual_string = bst_output.str();
+    ASSERT_EQUAL(actual_string, expected_string);
+}
+
+// I think this works because ++ seems to work
+// no idea how to test this
 TEST(test_min_greater_than)
 {
+    BinarySearchTree<int> bst;
+    bst.insert(4);
+    bst.insert(2);
+    bst.insert(6);
+    bst.insert(1);
+    bst.insert(3);
+    bst.insert(5);
+    bst.insert(7);
+    ASSERT_EQUAL(*bst.min_greater_than(5), 6);
+    ASSERT_EQUAL(*bst.min_greater_than(3), 4);
 }
 
 TEST_MAIN()

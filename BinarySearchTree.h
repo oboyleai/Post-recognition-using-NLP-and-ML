@@ -605,8 +605,8 @@ private:
     if (node != nullptr)
     {
       os << node->datum << " ";
-      traverse_inorder_impl(node->left, os);
-      traverse_inorder_impl(node->right, os);
+      traverse_preorder_impl(node->left, os);
+      traverse_preorder_impl(node->right, os);
     }
   }
 
