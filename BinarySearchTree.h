@@ -391,16 +391,17 @@ private:
   //          with the same elements and EXACTLY the same structure as the
   //          tree rooted at 'node'.
   // NOTE:    This function must be tree recursive.
-  
-  // this is not finished
+
   static Node *copy_nodes_impl(Node *node)
   {
+    if (node == nullptr)
+      return nullptr;
+
     Node *new_node = new Node;
-    new_node->datum = new_node->datum;
-    new_node->left = node->left;
-    new_node->right = node->right;
+    new_node->datum = node->datum;
+    new_node->left = copy_nodes_impl(node->left);
+    new_node->right = copy_nodes_impl(node->right);
     return new_node;
-    // add recursion
   }
 
   // EFFECTS: Frees the memory for all nodes used in the tree rooted at 'node'.
@@ -546,6 +547,10 @@ private:
   // NOTE:    This function must be tree recursive.
   static bool check_sorting_invariant_impl(const Node *node, Compare less)
   {
+
+    if (node == nullptr)
+      return true;
+
     Node *l_node = node->left;
     Node *r_node = node->right;
     bool sorting_invariant_holds = true;
@@ -554,15 +559,17 @@ private:
     // then recursively calls on the left node to check the nodes below it
     if (l_node != nullptr)
     {
-      sorting_invariant_holds = less(l_node->datum, node->datum);
-      sorting_invariant_holds = check_sorting_invariant_impl(l_node, less);
+      sorting_invariant_holds =
+          less(l_node->datum, node->datum) &&
+          check_sorting_invariant_impl(l_node, less);
     }
 
     // same as above just for the right
     if (r_node != nullptr)
     {
-      sorting_invariant_holds = less(node->datum, r_node->datum);
-      sorting_invariant_holds = check_sorting_invariant_impl(r_node, less);
+      sorting_invariant_holds =
+          less(node->datum, r_node->datum) &&
+          check_sorting_invariant_impl(r_node, less);
     }
 
     return sorting_invariant_holds;
@@ -595,13 +602,12 @@ private:
   //       for the definition of a pre-order traversal.
   static void traverse_preorder_impl(const Node *node, std::ostream &os)
   {
-    if (node == nullptr)
+    if (node != nullptr)
     {
-      return;
+      os << node->datum << " ";
+      traverse_inorder_impl(node->left, os);
+      traverse_inorder_impl(node->right, os);
     }
-    os << node->datum << " ";
-    traverse_inorder_impl(node->left, os);
-    traverse_inorder_impl(node->right, os);
   }
 
   // EFFECTS : Returns a pointer to the Node containing the smallest element
@@ -615,24 +621,24 @@ private:
   // HINT: At each step, compare 'val' the the current node (using the
   //       'less' parameter). Based on the result, you gain some information
   //       about where the element you're looking for could be.
-  
-  //this hurts my head sooo badly
+
+  // this hurts my head sooo badly
   static Node *min_greater_than_impl(Node *node, const T &val, Compare less)
   {
     // base cases
-    if (node == nullptr || less(*max_element_impl(node), val))
+    if (node == nullptr || less(max_element_impl(node)->datum, val))
     {
       return nullptr;
     }
     else if (less(val, node->datum))
     {
-      if (less(node->left, val))
+      if (less(node->left->datum, val))
       {
         return node;
       }
       return min_greater_than_impl(node->left, val, less);
     }
-    else if (less(node->datum, val))
+    else
     {
       return min_greater_than_impl(node->right, val, less);
     }
