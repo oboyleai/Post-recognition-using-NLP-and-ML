@@ -255,8 +255,6 @@ TEST(test_traverse_preorder)
     ASSERT_EQUAL(actual_string, expected_string);
 }
 
-// I think this works because ++ seems to work
-// no idea how to test this
 TEST(test_min_greater_than)
 {
     BinarySearchTree<int> bst;
@@ -269,6 +267,10 @@ TEST(test_min_greater_than)
     bst.insert(7);
     ASSERT_EQUAL(*bst.min_greater_than(5), 6);
     ASSERT_EQUAL(*bst.min_greater_than(3), 4);
+    ASSERT_EQUAL(*bst.min_greater_than(2), 3);
+    ASSERT_EQUAL(*bst.min_greater_than(0), 1);
+    ASSERT_EQUAL(*bst.min_greater_than(6), 7);
+    ASSERT_EQUAL(bst.min_greater_than(40), bst.end());
 }
 
 TEST_MAIN()

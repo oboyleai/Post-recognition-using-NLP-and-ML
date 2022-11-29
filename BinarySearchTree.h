@@ -625,22 +625,29 @@ private:
   // this hurts my head sooo badly
   static Node *min_greater_than_impl(Node *node, const T &val, Compare less)
   {
-    // base cases
-    if (node == nullptr || less(max_element_impl(node)->datum, val))
+    // case that node is useless
+    if (node == nullptr)
+      return nullptr;
+    try
     {
+      // case that value is greater than / equal to current node
+
+      if (!less(val, node->datum))
+        return min_greater_than_impl(node->right, val, less);
+    }
+    catch (const std::exception &exc)
+    {
+      // case that node is null
       return nullptr;
     }
-    else if (less(val, node->datum))
+    Node *l_check = min_greater_than_impl(node->left, val, less);
+    if (l_check == nullptr)
     {
-      if (less(node->left->datum, val))
-      {
-        return node;
-      }
-      return min_greater_than_impl(node->left, val, less);
+      return node;
     }
     else
     {
-      return min_greater_than_impl(node->right, val, less);
+      return l_check;
     }
   }
 }; // END of BinarySearchTree class
