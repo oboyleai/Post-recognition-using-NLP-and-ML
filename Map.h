@@ -90,9 +90,9 @@ public:
   //       using "Value_type()".
   Iterator find(const Key_type &k) const
   {
-    // Map<Key_type, Value_type>::PairComp > ::Iterator it = bst.find(k);
-    // return it;
-    return bst.find(k);
+    Pair_type search_node;
+    search_node.first = k;
+    return bst.find(search_node);
   }
 
   // MODIFIES: this
@@ -117,11 +117,13 @@ public:
   {
     Pair_type search_node;
     search_node.first = k;
+
     if (bst.find(search_node) == bst.end())
     {
       Pair_type empty_node = search_node;
       bst.insert(empty_node);
     }
+
     Iterator test_iterator = bst.find(search_node);
     return test_iterator->second;
   }
@@ -136,8 +138,18 @@ public:
   //           the value true.
   std::pair<Iterator, bool> insert(const Pair_type &val)
   {
-    Iterator return_it = bst.find(val);
-    return std::pair<Iterator, bool>(return_it, return_it == bst.end());
+
+    if (bst.find(val) != bst.end())
+    {
+      std::pair<Iterator, bool> ming(bst.find(val), false);
+      return ming;
+    }
+    else
+    {
+      bst.insert(val);
+      std::pair<Iterator, bool> ming(bst.find(val), true);
+      return ming;
+    }
   }
 
   // EFFECTS : Returns an iterator to the first key-value pair in this Map.

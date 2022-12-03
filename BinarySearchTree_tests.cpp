@@ -12,6 +12,12 @@ TEST(test_empty)
 {
     BinarySearchTree<int> bst;
     ASSERT_TRUE(bst.empty());
+
+    bst.insert(1);
+    ASSERT_FALSE(bst.empty());
+
+    bst.insert(2);
+    ASSERT_FALSE(bst.empty());
 }
 
 TEST(test_size_impl)
@@ -33,6 +39,8 @@ TEST(test_size_impl)
 // not sure about this one
 // does bst efficiently insert the elements, or does it just put them in there
 // I am thinking that this has something to do with min_greater_than
+
+// maybe this one
 TEST(test_height_impl)
 {
 
@@ -117,7 +125,14 @@ TEST(test_destroy_nodes_impl)
 
 TEST(test_find_impl)
 {
+    // node == nullptr / empty tree
     BinarySearchTree<int> bst;
+    ASSERT_TRUE(bst.find(1) == bst.end());
+    // not (less(node->datum, query)) && !less(query, node->datum)
+    // else if (less(query, node->datum))
+    // else if (less(node->datum, query))
+    // else
+
     bst.insert(2);
     ASSERT_TRUE(*bst.find(2) == 2);
     ASSERT_TRUE(bst.find(1) == bst.end());
@@ -134,9 +149,18 @@ TEST(test_find_impl)
 
     ASSERT_TRUE(bst2.find(1) == ++bst2.begin());
     ASSERT_EQUAL(*bst2.find(4), *(++ ++ ++ ++bst2.begin()));
-}
 
-// I am sussed about min and max
+    // just me spamming the tests
+    BinarySearchTree<int> bst3;
+    bst3.insert(5);
+    bst3.insert(3);
+    bst3.insert(2);
+    bst3.insert(4);
+    bst3.insert(6);
+    bst3.insert(8);
+
+    ASSERT_EQUAL(*bst3.find(2), *bst3.begin());
+}
 
 TEST(test_min_element_impl)
 {
@@ -271,6 +295,9 @@ TEST(test_min_greater_than)
     ASSERT_EQUAL(*bst.min_greater_than(0), 1);
     ASSERT_EQUAL(*bst.min_greater_than(6), 7);
     ASSERT_EQUAL(bst.min_greater_than(40), bst.end());
+
+    BinarySearchTree<int> bst2;
+    ASSERT_TRUE(bst2.min_greater_than(5) == bst2.end());
 }
 
 TEST_MAIN()
