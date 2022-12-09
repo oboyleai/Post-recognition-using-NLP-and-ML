@@ -106,10 +106,12 @@ private:
         const string &tag,
         const string &word,
         double &new_prob,
-        int tag_post_count,
-        int post_count_double)
+        pair<double, double> counts)
     {
         pair<string, string> tag_word = {tag, word};
+        double tag_post_count = counts.first;
+        double post_count_double = counts.second;
+
         // adds the log liklihood probability to the log prior probability
 
         // if w is seen in the post do this
@@ -175,7 +177,6 @@ public:
             // put everything in right here
             post_contents.push_back(content);
             classify_list.push_back(unique_words(content));
-
             new_post_count++;
         }
 
@@ -197,12 +198,35 @@ public:
                 // for every unique word in each post
                 for (string word : classify_list[i])
                 {
-                    classify_helper(
-                        tag,
-                        word,
-                        new_prob,
-                        tag_post_count,
-                        post_count_double);
+                    pair<double, double> counts = {tag_post_count, post_count_double};
+                    classify_helper(tag, word, new_prob, counts);
+                    // pair<string, string> tag_word = {tag, word};
+                    // // adds the log liklihood probability to the log prior probability
+
+                    // // if w is seen in the post do this
+                    // //  new_prob += log(label_word_freq_map[p]
+                    // // / post_count_per_label[tag]);
+                    // //  if w does not occur in posts labeled d,
+                    // // but does occur in training data
+                    // //   new_prob += log(post_count_per_word[word] / post_count);
+                    // //  if w doesn't occur anywhere
+                    // // new_prob += log(1 / post_count);
+                    // if (label_word_freq_map[tag_word] >= 1)
+                    // {
+                    //     float tag_word_count = label_word_freq_map[tag_word];
+                    //     // double tag_word_count = ;
+                    //     new_prob += log(tag_word_count / tag_post_count);
+                    // }
+                    // else if (post_count_per_word[word] >= 1)
+                    // {
+                    //     double word_post_count = post_count_per_word[word];
+                    //     // double post_count_double = )
+                    //     new_prob += log(word_post_count / post_count_double);
+                    // }
+                    // else
+                    // {
+                    //     new_prob += log(1.0 / post_count_double);
+                    // }
                 }
 
                 if (abs(new_prob) < abs(highest_prob) || highest_prob == 0)
