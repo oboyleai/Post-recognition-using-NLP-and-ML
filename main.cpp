@@ -66,7 +66,9 @@ public:
         vector<string> correct_labels;
         vector<string> label_unique_list;
         vector<vector<string>> classify_list;
-
+        vector<double> calculated_log;
+        vector<string> post_contents;
+        int new_post_count = 0;
         // converts file into string stream
         csvstream csvin(filename);
 
@@ -81,54 +83,72 @@ public:
             {
                 label_unique_list.push_back(tag);
             }
-
+            post_contents.push_back(content);
             classify_list.push_back(unique_words(content));
+        }
+        for (vector<string> i : classify_list)
+        {
+            new_post_count++;
         }
 
         double highest_prob = 0;
 
+        // for every post in the new file
         for (vector<string> i : classify_list)
         {
             highest_prob = 0;
-            map<string, double> prob_list;
+
             string highest_prob_tag;
+
+            // for every unique post label
             for (string tag : label_unique_list)
             {
+                // calculates log prior probability
                 double new_prob = log(post_count_per_label[tag] / post_count);
+                // for every unique word in each post
                 for (string word : i)
                 {
-
-                    if (key_exists_in_map(post_count_per_word, word))
+                    pair<string, string> p = {tag, word};
+                    // adds the log liklihood probability to the log prior probability
+                    if (label_word_freq_map[p] != 0)
                     {
-                        pair<string, string> p = {tag, word};
+
                         new_prob += log(label_word_freq_map[p] / post_count_per_label[tag]);
                     }
-                    else if (!key_exists_in_map(post_count_per_word, word))
+                    else if (label_word_freq_map[p] == 0)
                     {
                         new_prob += log(1 / post_count);
                     }
                     else
                     {
-                        new_prob += log(post_count_per_word[word]);
+                        new_prob += log(post_count_per_word[word] / post_count);
                     }
                 }
-                prob_list[tag] = new_prob;
 
-                if (new_prob > highest_prob)
+                if (new_prob < highest_prob)
                 {
                     highest_prob_tag = tag;
                     highest_prob = new_prob;
                 }
             }
-            // high chance of being in reverse order
-            correct_labels.push_back(highest_prob_tag);
+            calculated_labels.push_back(highest_prob_tag);
+            calculated_log.push_back(highest_prob);
+        }
+        cout << "\t"
+             << "test data:" << endl;
+        for (int i = 0; i < new_post_count; i++)
+        {
+            cout << "\t\t"
+                 << "correct = " << correct_labels[i] << ", predicted = ";
+            cout << calculated_labels[i] << ", log-probability score = " << calculated_log[i] << endl;
+            cout << "\t\t"
+                 << "content = " << post_contents[i] << endl;
         }
     }
     void train_on_file(string filename)
     {
         // converts file into string stream
         csvstream csvin(filename);
-        // vector<string> tag_list, content_list;
         map<string, string> row;
         vector<string> total_unique_words;
 
@@ -157,6 +177,7 @@ public:
 
             for (string word : content_words)
             {
+                // adds word to total unique words if it doesn't already exist in list
                 bool word_is_unique = true;
                 for (string unique_word : total_unique_words)
                 {
@@ -168,11 +189,13 @@ public:
                 unique_word_count += word_is_unique;
                 total_unique_words.push_back(word);
 
+                // increments spot in map for word
                 if (!key_exists_in_map(post_count_per_word, word))
                     post_count_per_word[word] = 1;
                 else
                     post_count_per_word[word]++;
 
+                // increments spot in map for pair
                 pair<string, string> label_word = {tag, word};
                 if (label_word_freq_map.find(label_word) == label_word_freq_map.end())
                     label_word_freq_map[label_word] = 1;
@@ -180,17 +203,52 @@ public:
                     label_word_freq_map[label_word]++;
             }
 
-            // adds to other map
+            // if not already contained in tag_list
+            if (find(tag_list.begin(), tag_list.end(), tag) == tag_list.end())
+                tag_list.push_back(tag);
 
-            tag_list.push_back(tag);
+            // adds to other map
             content_list.push_back(content);
             post_count++;
         }
+
         if (debug)
         {
             cout << "trained on " << post_count << " examples\n";
             cout << "vocabulary size = " << unique_word_count << endl
                  << endl;
+            cout << "classes: " << endl;
+
+            vector<string> previous_tags;
+            for (string current_tag : tag_list)
+            {
+                if (find(previous_tags.begin(), previous_tags.end(), current_tag) != previous_tags.end())
+                {
+                    previous_tags.push_back(current_tag);
+                    double post_with_label_c = post_count_per_label[current_tag];
+                    double log_prior = log(post_with_label_c / post_count);
+                    cout << "\t" << current_tag << ", "
+                         << post_with_label_c
+                         << " examples, log-prior = " << log_prior << endl;
+                }
+            }
+
+            // classifier parameters
+            cout << "classifier parameters:" << endl;
+
+            map<pair<string, string>, int>::iterator it;
+
+            for (it = label_word_freq_map.begin(); it != label_word_freq_map.end(); it++)
+            {
+                double count = it->second;
+                string current_tag = it->first.first;
+                string current_word = it->first.second;
+                double post_count_label_c = post_count_per_label[current_tag];
+                double log_likelihood = log(count / post_count_label_c);
+                cout << "\t" << current_tag << ":" << current_word << ", count = "
+                     << count << ", log-likelihood = " << log_likelihood << endl;
+            }
+            cout << endl;
         }
     }
 };
@@ -230,5 +288,5 @@ int main(int argc, char *argv[])
 
     Indentifier ident(debug);
     ident.train_on_file(filename);
-    ident.classify(argv[2]);
+    // ident.classify(argv[2]);
 }
