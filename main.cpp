@@ -333,7 +333,7 @@ public:
         {
             csvstream ming(file1);
         }
-        catch (exception e)
+        catch (...)
         {
             cout << "Error opening file: " << file1 << endl;
             return false;
@@ -343,7 +343,7 @@ public:
         {
             csvstream ming(file2);
         }
-        catch (exception e)
+        catch (...)
         {
             cout << "Error opening file: " << file2 << endl;
             return false;
