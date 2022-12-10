@@ -338,7 +338,6 @@ public:
             cout << "Error opening file: " << file1 << endl;
             return false;
         }
-
         try
         {
             csvstream ming(file2);
@@ -348,7 +347,6 @@ public:
             cout << "Error opening file: " << file2 << endl;
             return false;
         }
-
         return true;
     }
 };
